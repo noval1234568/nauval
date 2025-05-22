@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Prediksi Performa Siswa</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 400px; margin: 40px auto; }
+    label { display: block; margin-top: 15px; }
+    input, select { width: 100%; padding: 8px; margin-top: 5px; }
+    button { margin-top: 20px; padding: 10px 20px; }
+    #hasil { margin-top: 25px; font-size: 1.1em; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>Form Prediksi Performa Siswa</h2>
+  <form id="prediksiForm">
+    <label for="gender">Jenis Kelamin</label>
+    <select id="gender" name="gender" required>
+      <option value="">-- Pilih --</option>
+      <option value="L">Laki-laki</option>
+      <option value="P">Perempuan</option>
+    </select>
+
+    <label for="dob">Tanggal Lahir</label>
+    <input type="date" id="dob" name="dob" required>
+
+    <label for="nilai">Rata-rata Nilai</label>
+    <input type="number" id="nilai" name="nilai" min="0" max="100" step="0.01" required>
+
+    <button type="submit">Prediksi</button>
+  </form>
+  <div id="hasil"></div>
+
+  <script>
+    // Fungsi untuk menghitung umur dari tanggal lahir
+    function hitungUmur(dob) {
+      const birthDate = new Date(dob);
+      const today = new Date();
+      let umur = today.getFullYear() - birthDate.getFullYear();
+      const m = today.getMonth() - birthDate.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        umur--;
+      }
+      return umur;
+    }
+
+    // Fungsi untuk meng-encode gender
+    function encodeGender(gender) {
+      return gender === "L" ? 0 : 1;
+    }
+
+    document.getElementById('prediksiForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const gender = document.getElementById('gender').value;
+      const dob = document.getElementById('dob').value;
+      const rata_rata_nilai = parseFloat(document.getElementById('nilai').value);
+
+      // Preprocessing sesuai model ML
+      const dataModel = {
+        gender_enc: encodeGender(gender),
+        umur: hitungUmur(dob),
+        rata_rata_nilai: rata_rata_nilai
+      };
+
+      // Kirim ke backend Python (Flask/FastAPI)
+      try {
+        const response = await fetch('http://localhost:5000/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(dataModel)
+        });
+        const result = await response.json();
+        document.getElementById('hasil').textContent = `Kategori Performa: ${result.kategori}`;
+      } catch (err) {
+        document.getElementById('hasil').textContent = 'Terjadi kesalahan saat memproses prediksi.';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prediksi Kategori Mahasiswa</title>
+</head>
+<body>
+    <h1>Form Prediksi Kategori Mahasiswa</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Prediksi</button>
+    </form>
+    {% if category %}
+        <div>
+            <b>Hasil Prediksi: {{ category }}</b>
+        </div>
+    {% endif %}
+</body>
+</html>

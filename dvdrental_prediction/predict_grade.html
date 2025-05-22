@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Predict Grade</title>
+</head>
+<body>
+    <h1>Form Prediksi Nilai</h1>
+    <form method="post">
+        {% csrf_token %}
+        Gender: <input type="text" name="gender"><br>
+        Tanggal Lahir: <input type="date" name="dob"><br>
+        <input type="submit" value="Prediksi">
+    </form>
+    {% if prediction %}
+        <h2>Hasil Prediksi: {{ prediction }}</h2>
+        <h3>Probabilitas: {{ probabilities }}</h3>
+        {% if chart %}
+            <img src="data:image/png;base64,{{ chart }}" alt="Probability Chart">
+        {% endif %}
+    {% endif %}
+</body>
+</html>

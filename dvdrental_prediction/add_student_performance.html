@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Grade Prediction</title>
+</head>
+<body>
+    <h1>Student Grade Prediction</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="gender">Gender:</label>
+        <select name="gender" id="gender">
+            <option value="L">L</option>
+            <option value="P">P</option>
+        </select><br>
+        <label for="dob">Date of Birth:</label>
+        <input type="date" name="dob" id="dob"><br>
+        <input type="submit" value="Predict">
+    </form>
+    {% if prediction is not None %}
+        <p>Predicted Average Grade: <b>{{ prediction }}</b></p>
+        {% if probabilities %}
+            <p>Probabilities: {{ probabilities|join:", " }}</p>
+            <img src="data:image/png;base64,{{ chart }}" alt="Probability Chart"/>
+        {% endif %}
+    {% endif %}
+</body>
+</html>
